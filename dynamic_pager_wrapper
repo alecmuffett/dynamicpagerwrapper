@@ -1,0 +1,80 @@
+#!/bin/sh
+
+# (c) 2010 Alec Muffett Alec.Muffett@gmail.com
+
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# http://code.google.com/p/dynamicpagerwrapper/
+
+# reference/inspiration http://is.gd/9qZIX or http://bit.ly/axANub
+
+# what volume do we wait for?
+ALT_ROOT=/Volumes/scratch
+
+# where, under ${ALT_ROOT}, do we put the swapfiles?
+ALT_PATH=${ALT_ROOT}/.vm
+
+# what file must exist for this to be done
+ALT_SWAP_FLAG=/USE_ALTERNATE_SWAP
+
+##################################################################
+
+# shortcuts
+PAGER=/sbin/dynamic_pager
+
+# tunable size
+# value: 1gb ; theory: go large, early
+SIZE=1073741824
+
+# tunable highwatertrigger
+# value: 20% of $SIZE ; theory: use 80% of your swapfile before growing once
+HWT=214748364
+
+# tunable lowwatertrigger
+# value: 2x $SIZE ; theory: don't shuffle memory until you get 2 swapfiles back
+LWT=2147483648
+
+##################################################################
+
+# if there is a suggestion we try to get clever
+if [ -f $ALT_SWAP_FLAG ]
+then
+    # wait for the volume to arise
+    wait4path $ALT_ROOT
+
+    # when we get here, check the target exists
+    if [ ! -d $ALT_PATH ]
+    then
+	echo "cannot find $ALT_PATH so falling back to default behaviour"
+	exec $PAGER "$@"
+	echo failed: exec $PAGER "$@"
+    fi
+
+    # try our alternate system
+    exec $PAGER -F ${ALT_PATH}/swapfile -S $SIZE -H $HWT -L $LWT
+fi
+
+# otherwise drop through with whatever arguments were supplied
+exec $PAGER "$@"
+
+# if we get here, something failed
+echo failed: exec $PAGER "$@"
+exit 1
