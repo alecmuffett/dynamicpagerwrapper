@@ -30,7 +30,7 @@
 ALT_ROOT=/Volumes/scratch
 
 # where, under ${ALT_ROOT}, do we put the swapfiles?
-ALT_PATH=${ALT_ROOT}/.vm
+ALT_PATH="${ALT_ROOT}"/.vm
 
 # what file must exist for this to be done
 ALT_SWAP_FLAG=/USE_ALTERNATE_SWAP
@@ -74,6 +74,7 @@ then
 
     # try our alternate system
     exec $PAGER -F "${ALT_PATH}"/swapfile -S $SIZE -H $HWT -L $LWT
+    echo this is probably bad: failed: exec $PAGER -F "${ALT_PATH}"/swapfile -S $SIZE -H $HWT -L $LWT
 fi
 
 # otherwise drop through with whatever arguments were supplied
