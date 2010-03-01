@@ -69,6 +69,9 @@ then
 	exit 1 # if we get here, in theory something is really REALLY bad
     fi
 
+    # erase the old swapfiles
+    rm -f ${ALT_PATH}/swapfile*
+
     # try our alternate system
     exec $PAGER -F ${ALT_PATH}/swapfile -S $SIZE -H $HWT -L $LWT
 fi
