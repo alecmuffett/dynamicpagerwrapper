@@ -46,7 +46,7 @@ SIZE=1073741824
 
 # tunable highwatertrigger
 # value: 20% of $SIZE ; theory: use 80% of your swapfile before growing once
-HWT=2097152
+HWT=209715200 # 200Mb
 
 # tunable lowwatertrigger
 # value: 2x $SIZE ; theory: don't shuffle memory until you get 2 swapfiles back
